@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styles from './page.module.css'
 import { fetchBooks } from './lib/api'
 import { exportToCsv } from './lib/exportToCsv'
@@ -14,7 +14,6 @@ export default function Home() {
 		avgReviews: 2,
 	})
 
-
 	const [books, setBooks] = useState<Book[]>([])
 	const [page, setPage] = useState(1)
 	const [hasMore, setHasMore] = useState(true)
@@ -22,31 +21,34 @@ export default function Home() {
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target
-		setForm(prev => ({ ...prev, [name]: value }))
+		setForm(prev => ({ ...prev, [name]: name === 'locale' ? value : +value }))
 	}
+
+	const loadMoreBooks = useCallback(
+		async (pageNumber: number) => {
+			if (loading || !hasMore) return
+			setLoading(true)
+
+			const data = await fetchBooks({ ...form, page: pageNumber })
+
+			if (data.length === 0) {
+				setHasMore(false)
+			} else {
+				setBooks(prev => [...prev, ...data])
+				setPage(prev => prev + 1)
+			}
+
+			setLoading(false)
+		},
+		[form, loading, hasMore]
+	)
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		setBooks([])
 		setPage(1)
 		setHasMore(true)
-		loadMoreBooks(1)
-	}
-
-	const loadMoreBooks = async (pageNumber: number) => {
-		if (loading || !hasMore) return
-		setLoading(true)
-
-		const data = await fetchBooks({ ...form, page: pageNumber })
-
-		if (data.length === 0) {
-			setHasMore(false)
-		} else {
-			setBooks(prev => [...prev, ...data])
-			setPage(prev => prev + 1)
-		}
-
-		setLoading(false)
+		await loadMoreBooks(1)
 	}
 
 	useEffect(() => {
@@ -65,7 +67,7 @@ export default function Home() {
 		return () => {
 			if (sentinel) observer.unobserve(sentinel)
 		}
-	}, [page, hasMore, loading])
+	}, [loadMoreBooks, page, hasMore, loading])
 
 	return (
 		<div className={styles.container}>
@@ -90,9 +92,10 @@ export default function Home() {
 					onClick={() => exportToCsv('books.csv', books)}
 					style={{ margin: '1rem 0' }}
 				>
-					 Download CSV
+					Download CSV
 				</button>
 			)}
+
 			<div className={styles.list}>
 				{books.map((book: Book) => (
 					<div key={book.index} className={styles.card}>
