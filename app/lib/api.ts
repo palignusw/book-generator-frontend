@@ -13,6 +13,6 @@ export async function fetchBooks(params: {
 		reviews: params.avgReviews.toString(),
 	}).toString()
 
-	const res = await fetch(`http://localhost:3001/books?${query}`)
+	const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books?${query}`)
 	return res.json()
 }
