@@ -94,7 +94,7 @@ export default function Home() {
 				</button>
 			)}
 			<div className={styles.list}>
-				{books.map((book: any) => (
+				{books.map((book: Book) => (
 					<div key={book.index} className={styles.card}>
 						<h3>{book.title}</h3>
 						<p>
