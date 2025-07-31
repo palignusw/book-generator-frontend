@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import styles from './page.module.css'
 import { fetchBooks } from './lib/api'
 import { exportToCsv } from './lib/exportToCsv'
+import { Book } from './lib/types'
 
 export default function Home() {
 	const [form, setForm] = useState({
@@ -13,15 +14,6 @@ export default function Home() {
 		avgReviews: 2,
 	})
 
-	type Book = {
-		index: number
-		title: string
-		authors: string[]
-		publisher: string
-		likes: number
-		reviews: number
-		isbn: string
-	}
 
 	const [books, setBooks] = useState<Book[]>([])
 	const [page, setPage] = useState(1)

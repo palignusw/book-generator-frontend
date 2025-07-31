@@ -1,16 +1,22 @@
-export function exportToCsv(filename: string, rows: any[]) {
+import { Book } from './types'
+
+export function exportToCsv(filename: string, rows: Book[]) {
 	if (!rows.length) return
 
-	const headers = Object.keys(rows[0])
+	const headers = Object.keys(rows[0]) as (keyof Book)[]
 	const csvContent =
 		headers.join(',') +
 		'\n' +
 		rows
 			.map(row =>
 				headers
-					.map(
-						field => `"${(row[field] ?? '').toString().replace(/"/g, '""')}"`
-					)
+					.map(field => {
+						const value = row[field]
+						const stringValue = Array.isArray(value)
+							? value.join(', ')
+							: String(value ?? '')
+						return `"${stringValue.replace(/"/g, '""')}"`
+					})
 					.join(',')
 			)
 			.join('\n')
