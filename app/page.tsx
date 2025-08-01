@@ -19,9 +19,14 @@ export default function Home() {
 	const [hasMore, setHasMore] = useState(true)
 	const [loading, setLoading] = useState(false)
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+	) => {
 		const { name, value } = e.target
-		setForm(prev => ({ ...prev, [name]: name === 'locale' ? value : +value }))
+		setForm(prev => ({
+			...prev,
+			[name]: ['avgLikes', 'avgReviews'].includes(name) ? +value : value,
+		}))
 	}
 
 	const loadMoreBooks = useCallback(
@@ -73,17 +78,48 @@ export default function Home() {
 		<div className={styles.container}>
 			<h1 className={styles.heading}>Book Generator</h1>
 			<form onSubmit={handleSubmit} className={styles.form}>
-				{['seed', 'locale', 'avgLikes', 'avgReviews'].map(field => (
-					<div key={field}>
-						<label>{field}</label>
-						<input
-							type={field === 'locale' ? 'text' : 'number'}
-							name={field}
-							value={form[field as keyof typeof form]}
-							onChange={handleChange}
-						/>
-					</div>
-				))}
+				<div>
+					<label>Seed</label>
+					<input
+						type='text'
+						name='seed'
+						value={form.seed}
+						onChange={handleChange}
+					/>
+				</div>
+
+				<div>
+					<label>Language</label>
+					<select name='locale' value={form.locale} onChange={handleChange}>
+						<option value='en'>English</option>
+						<option value='ru'>Russian</option>
+						<option value='fr'>French</option>
+						<option value='de'>German</option>
+						<option value='es'>Spanish</option>
+						<option value='it'>Italian</option>
+					</select>
+				</div>
+
+				<div>
+					<label>Average Likes</label>
+					<input
+						type='number'
+						name='avgLikes'
+						value={form.avgLikes}
+						onChange={handleChange}
+					/>
+				</div>
+
+				<div>
+					<label>Average Reviews</label>
+					<input
+						type='number'
+						name='avgReviews'
+						value={form.avgReviews}
+						onChange={handleChange}
+					/>
+				</div>
+
 				<button type='submit'>Generate</button>
 			</form>
 
