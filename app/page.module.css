@@ -1,109 +1,176 @@
 .container {
-	max-width: 900px;
-	margin: 0 auto;
-	padding: 40px 20px;
-	font-family: 'Segoe UI', sans-serif;
-	background-color: #f4f4f4;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
 }
 
 .heading {
-	font-size: 2.5rem;
-	font-weight: 700;
-	text-align: center;
-	color: #333;
-	margin-bottom: 30px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
 }
 
 .form {
-	background: #ffffff;
-	padding: 32px;
-	border-radius: 20px;
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-	margin-bottom: 40px;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-
-	div {
-		display: flex;
-		flex-direction: column;
-
-		label {
-			margin-bottom: 6px;
-			font-weight: 600;
-			color: #333;
-		}
-
-		input,
-		select {
-			padding: 12px 16px;
-			border-radius: 10px;
-			border: 1px solid #ccc;
-			font-size: 1rem;
-			background-color: #fff;
-			transition: border 0.3s ease;
-			color: #000;
-
-			&:focus {
-				outline: none;
-				border-color: #6c5ce7;
-			}
-		}
-	}
-
-	button {
-		padding: 14px;
-		background-color: #6c5ce7;
-		color: white;
-		font-weight: 600;
-		font-size: 1.05rem;
-		border: none;
-		border-radius: 10px;
-		cursor: pointer;
-		transition: background-color 0.3s ease, transform 0.2s ease;
-
-		&:hover {
-			background-color: #5a4ee6;
-			transform: translateY(-2px);
-		}
-
-		&:active {
-			transform: translateY(0);
-		}
-	}
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.list {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: 20px;
+.form div {
+  display: flex;
+  flex-direction: column;
 }
 
-.card {
-	background: white;
-	padding: 20px;
-	border-radius: 16px;
-	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-	transition: transform 0.2s ease;
+.form label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
 
-	&:hover {
-		transform: translateY(-4px);
-	}
+.form input,
+.form select {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border 0.3s ease;
+  color: #000;
+}
 
-	h3 {
-		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
-		color: #1f1f1f;
-	}
+.form input:focus,
+.form select:focus {
+  outline: none;
+  border-color: #6c5ce7;
+}
 
-	p {
-		margin: 0.2rem 0;
-		color: #444;
-		font-size: 0.95rem;
+.form button {
+  padding: 14px;
+  background-color: #6c5ce7;
+  color: white;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-		b {
-			font-weight: 600;
-			color: #222;
-		}
-	}
+.form button:hover {
+  background-color: #5a4ee6;
+  transform: translateY(-2px);
+}
+
+.form button:active {
+  transform: translateY(0);
+}
+
+.tableWrapper {
+  display: none;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+}
+
+.table thead {
+  background-color: #f6f8fa;
+}
+
+.table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 700;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table td {
+  padding: 14px 16px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.table tr:hover {
+  background-color: #f2f7ff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardItem {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cardItem h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f1f1f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardItem h3 span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #3b57c3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cardItem .author {
+  font-size: 1.05rem;
+  color: #333;
+}
+
+.cardItem .publisher {
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.cardItem .stars {
+  color: #f4c542;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+@media (min-width: 768px) {
+  .tableWrapper {
+    display: block;
+  }
+
+  .cardList {
+    display: none;
+  }
 }

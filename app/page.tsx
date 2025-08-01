@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styles from './page.module.css'
 import { fetchBooks } from './lib/api'
 import { exportToCsv } from './lib/exportToCsv'
@@ -15,9 +15,10 @@ export default function Home() {
 	})
 
 	const [books, setBooks] = useState<Book[]>([])
-	const [page, setPage] = useState(1)
 	const [hasMore, setHasMore] = useState(true)
 	const [loading, setLoading] = useState(false)
+
+	const pageRef = useRef(1)
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -29,38 +30,41 @@ export default function Home() {
 		}))
 	}
 
-	const loadMoreBooks = useCallback(
-		async (pageNumber: number) => {
-			if (loading || !hasMore) return
-			setLoading(true)
+	const getStarRating = (likes: number, reviews: number): number => {
+		if (reviews === 0) return 0
+		const ratio = likes / reviews
+		return Math.round(Math.min(ratio, 1) * 5)
+	}
 
-			const data = await fetchBooks({ ...form, page: pageNumber })
+	const loadMoreBooks = useCallback(async () => {
+		if (loading || !hasMore) return
+		setLoading(true)
 
-			if (data.length === 0) {
-				setHasMore(false)
-			} else {
-				setBooks(prev => [...prev, ...data])
-				setPage(prev => prev + 1)
-			}
+		const data = await fetchBooks({ ...form, page: pageRef.current })
 
-			setLoading(false)
-		},
-		[form, loading, hasMore]
-	)
+		if (data.length === 0) {
+			setHasMore(false)
+		} else {
+			setBooks(prev => [...prev, ...data])
+			pageRef.current += 1
+		}
+
+		setLoading(false)
+	}, [form, loading, hasMore])
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		setBooks([])
-		setPage(1)
+		pageRef.current = 1
 		setHasMore(true)
-		await loadMoreBooks(1)
+		await loadMoreBooks()
 	}
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			entries => {
 				if (entries[0].isIntersecting && hasMore && !loading) {
-					loadMoreBooks(page)
+					loadMoreBooks()
 				}
 			},
 			{ threshold: 1 }
@@ -72,7 +76,7 @@ export default function Home() {
 		return () => {
 			if (sentinel) observer.unobserve(sentinel)
 		}
-	}, [loadMoreBooks, page, hasMore, loading])
+	}, [loadMoreBooks, hasMore, loading])
 
 	return (
 		<div className={styles.container}>
@@ -132,24 +136,56 @@ export default function Home() {
 				</button>
 			)}
 
-			<div className={styles.list}>
-				{books.map((book: Book) => (
-					<div key={book.index} className={styles.card}>
-						<h3>{book.title}</h3>
-						<p>
-							<b>Author:</b> {book.authors.join(', ')}
-						</p>
-						<p>
-							<b>Publisher:</b> {book.publisher}
-						</p>
-						<p>
-							<b>Likes:</b> {book.likes}, <b>Reviews:</b> {book.reviews}
-						</p>
-						<p>
-							<b>ISBN:</b> {book.isbn}
-						</p>
-					</div>
-				))}
+			<div className={styles.cardList}>
+				{books.map(book => {
+					const stars = getStarRating(book.likes, book.reviews)
+					return (
+						<div key={book.index} className={styles.cardItem}>
+							<h3>
+								{book.title}
+								<span>
+									👍 <span>{book.likes}</span>
+								</span>
+							</h3>
+							<p className={styles.author}>by {book.authors.join(', ')}</p>
+							<div className={styles.stars}>
+								{Array.from({ length: 5 }, (_, i) => (
+									<span key={i}>{i < stars ? '★' : '☆'}</span>
+								))}
+							</div>
+							<p className={styles.publisher}>{book.publisher}</p>
+						</div>
+					)
+				})}
+			</div>
+
+			<div className={styles.tableWrapper}>
+				<table className={styles.table}>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>ISBN</th>
+							<th>Title</th>
+							<th>Author(s)</th>
+							<th>Publisher</th>
+							<th>Likes</th>
+							<th>Reviews</th>
+						</tr>
+					</thead>
+					<tbody>
+						{books.map(book => (
+							<tr key={book.index}>
+								<td>{book.index}</td>
+								<td>{book.isbn}</td>
+								<td>{book.title}</td>
+								<td>{book.authors.join(', ')}</td>
+								<td>{book.publisher}</td>
+								<td>{book.likes}</td>
+								<td>{book.reviews}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
 			</div>
 
 			{loading && <p>Loading more books...</p>}
